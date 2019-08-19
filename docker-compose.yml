@@ -1,0 +1,50 @@
+# v3 syntax
+version: "3"
+
+# Named volumes
+volumes:
+  # MySQL Data
+  aquino-mysql-data:
+    driver: local
+
+services:
+  # MySQL (5.7)
+  database:
+    image: mysql:5.7
+    container_name: aquino-mysql
+    volumes:
+      - aquino-mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=aquino
+      - MYSQL_DATABASE=aquino
+      - MYSQL_USER=aquino
+      - MYSQL_PASSWORD=aquino
+  # PHP (with Nginx)
+  app:
+    image: ambientum/php:7.2-nginx
+    container_name: aquino-app
+    depends_on:
+      - database
+    volumes:
+      - .:/var/www/app
+    ports:
+      - "80:8080"
+    links:
+      - database
+  # PHPMYADMIN
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: aquino-phpmyadmin
+    depends_on:
+      - database
+    links:
+      - database
+    ports:
+      - "81:80"
+    environment:
+      - PMA_HOST=database
+      - MYSQL_ROOT_PASSWORD=aquino
+      - MYSQL_USER=aquino
+      - MYSQL_PASSWORD=aquino
