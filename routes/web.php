@@ -17,4 +17,8 @@ Route::group(['prefix' => 'adm', 'as' => 'adm.'], function () {
     }]);
 });
 
+Route::group(['prefix' => 'account', 'as' => 'account.', 'namespace' => 'Website'], function () {
+    Route::get('login', ['as' => 'login', 'uses' => 'UsersController@login']);
+});
+
 Route::view('/', 'welcome');
